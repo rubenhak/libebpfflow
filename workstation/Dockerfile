@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get install -y linux-headers-generic
 # linux-image-generic linux-tools-generic
 
@@ -13,9 +13,11 @@ RUN apt-get install -y \
     pkg-config \
     libzmq3-dev \
     libcurl4-openssl-dev \
-    libbpfcc-dev \
+    libbpfcc-dev
+
+RUN apt-get install -y \
     lsb-release \
-    kmod \
+    # kmod \
     git
 
 RUN echo "deb [trusted=yes] http://repo.iovisor.org/apt/bionic bionic main" | \
