@@ -23,4 +23,4 @@ RUN echo "deb [trusted=yes] http://repo.iovisor.org/apt/bionic bionic main" | \
   apt-get update -y && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y bcc-tools libbcc-examples
 
-WORKDIR /usr/src
+WORKDIR /usr/libbpfflow.git
