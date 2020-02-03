@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
 RUN apt-get update -y
-RUN apt-get install -y linux-headers-generic
+RUN apt-get install -y linux-headers-$(uname -r)
 # linux-image-generic linux-tools-generic
 
 RUN apt-get install -y \
