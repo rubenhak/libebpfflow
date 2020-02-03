@@ -13,74 +13,37 @@ $ make
 $ ./ebpflowexport -v
 ```
 
-# Current Error
-Generating:
+# Running
+TCP Events:
 ```sh
-root@91c40d059526:/usr/libbpfflow.git# ./autogen.sh
-Wait please...
-
-Now running ./configure
-checking for gcc... gcc
-checking whether the C compiler works... yes
-checking for C compiler default output file name... a.out
-checking for suffix of executables... 
-checking whether we are cross compiling... no
-checking for suffix of object files... o
-checking whether we are using the GNU C compiler... yes
-checking whether gcc accepts -g... yes
-checking for gcc option to accept ISO C89... none needed
-checking how to run the C preprocessor... gcc -E
-checking for g++... g++
-checking whether we are using the GNU C++ compiler... yes
-checking whether g++ accepts -g... yes
-checking for printf in -lbcc... yes
-checking eBPF library new API version... no
-checking for json_object_new_object in -ljson-c... yes
-checking for curl_easy_init in -lcurl... yes
-checking for zmq_socket_monitor in -lzmq... yes
-checking for json_object_new_double_s in -ljson-c... yes
-configure: creating ./config.status
-config.status: creating Makefile
-config.status: creating config.h
-```
-
-Compiling: 
-```sh
-root@91c40d059526:/usr/libbpfflow.git# make
-g++ -c -std=c++11 -g -Wall -I/usr/include/json-c -DHAVE_JSONC -I/usr/include/x86_64-linux-gnu -DHAVE_LIBCURL container_info.cpp -o container_info.o
-echo -n "const char * ebpf_code = R\"(" > ebpflow.ebpf.enc
-cat ebpflow_header.ebpf ebpf_types.h ebpflow_code.ebpf | base64 -w 0  >> ebpflow.ebpf.enc
-echo ")\";" >> ebpflow.ebpf.enc
-g++ -c -I /usr/include/bcc/compat -std=c++11 -g -Wall -I/usr/include/json-c -DHAVE_JSONC -I/usr/include/x86_64-linux-gnu -DHAVE_LIBCURL -I /usr/include/bcc/compat ebpf_flow.cpp -o ebpf_flow.o
-ar rvs libebpfflow.a ebpf_flow.o container_info.o
-ar: creating libebpfflow.a
-a - ebpf_flow.o
-a - container_info.o
-g++ -I /usr/include/bcc/compat -std=c++11 -g -Wall -I/usr/include/json-c -DHAVE_JSONC -I/usr/include/x86_64-linux-gnu -DHAVE_LIBCURL ebpflowexport.cpp -o ebpflowexport libebpfflow.a -lbcc -lzmq -ljson-c -lcurl
-```
-
-Running:
-```sh
-root@91c40d059526:/usr/libbpfflow.git# ./ebpflowexport -v
+$ ./ebpflowexport -tio
 Welcome to ebpflowexport v.1.0.200203
 (C) 2018-19 ntop.org
 Initializing eBPF [Legacy API]...
-sh: 1: modprobe: not found
-chdir(/lib/modules/4.9.184-linuxkit/build): No such file or directory
-Unable to initialize libebpfflow: ebpf_initialization_failed
+Unable to initialize libebpfflow: ebpf_kprobe_attach_error
 eBPF terminated
 ```
 
-Installing kmod does not help much:
+TCP Close Events:
 ```sh
-root@91c40d059526:/usr/libbpfflow.git# apt-get install kmod
-
-root@91c40d059526:/usr/libbpfflow.git# ./ebpflowexport -v
+root@0fbd61fa0217:/usr/libbpfflow.git# ./ebpflowexport -c  
 Welcome to ebpflowexport v.1.0.200203
 (C) 2018-19 ntop.org
 Initializing eBPF [Legacy API]...
-modprobe: ERROR: ../libkmod/libkmod.c:586 kmod_search_moddep() could not open moddep file '/lib/modules/4.9.184-linuxkit/modules.dep.bin'
-modprobe: FATAL: Module kheaders not found in directory /lib/modules/4.9.184-linuxkit
-chdir(/lib/modules/4.9.184-linuxkit/build): No such file or directory
-Unable to initialize libebpfflow: ebpf_initialization_failed
+eBPF initializated successfully
+* Terminating * 
 eBPF terminated
+```
+
+UDP Events:
+```sh
+root@0fbd61fa0217:/usr/libbpfflow.git# ./ebpflowexport -u
+Welcome to ebpflowexport v.1.0.200203
+(C) 2018-19 ntop.org
+Initializing eBPF [Legacy API]...
+eBPF initializated successfully
+1580763732.087550 [enp0s3][Rcvd][IPv4/UDP][pid/tid: 0/0 [], uid/gid: 0/0][father pid/tid: 0/0 [], uid/gid: 0/0][addr: 192.168.0.30:5353 <-> 224.0.0.251:5353]
+1580763732.087591 [enp0s3][Rcvd][IPv4/UDP][pid/tid: 0/0 [], uid/gid: 0/0][father pid/tid: 0/0 [], uid/gid: 0/0][addr: fe80::1c4f:4143:bc2:4a4a:5353 <-> ff02::fb:5353]
+1580763732.358483 [enp0s3][Rcvd][IPv4/UDP][pid/tid: 0/0 [], uid/gid: 0/0][father pid/tid: 0/0 [], uid/gid: 0/0][addr: 192.168.0.25:5353 <-> 224.0.0.251:5353]
+```
+
